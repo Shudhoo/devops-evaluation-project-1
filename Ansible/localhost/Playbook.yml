@@ -1,0 +1,48 @@
+# This is all-in-one Playbook tp configure everything 
+- name: Install Java and Jenkins on local-host
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Run Java installation script
+      command: sudo /home/ubuntu/java_installation.sh
+    - name: Run Jenkins installation script
+      command: sudo /home/ubuntu/jenkins_installation.sh 
+- name: This is to install Java on K8s-Master
+  hosts: K8s-master
+  tasks:
+    - name: Run Java installation script on K8s-master
+      command: sudo /home/ubuntu/java_installation.sh
+- name: This to install Docker on K8s-Cluster
+  hosts: K8s-cluster
+  tasks:
+    - name: Copy script file to install docker on remote servers
+      copy:
+        src: /home/ubuntu/docker_installation.sh
+        dest: /home/ubuntu/docker_installation.sh
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+    - name: Run Docker installation script
+      command: sudo /home/ubuntu/docker_installation.sh
+- name: This is install Docker-CRI & Kubernetes Components
+  hosts: K8s-cluster
+  tasks:
+    - name: Copy Docker-CRI script file to remote servers
+      copy:
+        src: /home/ubuntu/docker_cri_installation.sh
+        dest: /home/ubuntu/docker_cri_installation.sh
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+    - name: Copy Kubernetes Script file to remote servers
+      copy:
+        src: /home/ubuntu/k8s_installation.sh
+        dest: /home/ubuntu/k8s_installation.sh
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+    - name: Run Docker-CRI installation script
+      command: sudo /home/ubuntu/docker_cri_installation.sh
+    - name : Run Kubernetes installation script
+      command: sudo /home/ubuntu/k8s_installation.sh
+
